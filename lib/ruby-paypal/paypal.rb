@@ -498,6 +498,26 @@ class Paypal
         make_nvp_call(params)
       end
 
+      # Fetch PayPal account balance
+      def get_balance(return_all_currencies = false)
+        params = {
+          'METHOD' => 'GetBalance',
+          'RETURNALLCURRENCIES' => return_all_currencies ? 1 : 0
+        }
+
+        response = make_nvp_call(params)
+
+        return {
+          amount:         response["L_AMT0"].to_d,
+          currency:       response["L_CURRENCYCODE0"],
+          timestamp:      response["TIMESTAMP"].to_datetime,
+          correlation_id: response["CORRELATIONID"],
+          ack:            response["ACK"],
+          version:        response["VERSION"],
+          build:          response["BUILD"]
+        }
+      end
+
    # techarch> Subscription APIs
 
     # Creates a payment subscription based on a start date, billing period, frequency, number of periods and amount
